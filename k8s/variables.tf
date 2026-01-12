@@ -8,6 +8,17 @@ variable "ssh_public_key_path" {
   default = "~/.ssh/id_ed25519.pub"
 }
 
+variable "server_location" {
+  type = string
+  default = "nbg1" //Nuremberg
+}
+
+variable "os_image" {
+  type    = string
+  default = "ubuntu-22.04"
+  
+}
+
 variable "cluster_private_cidr" {
   description = "Private network CIDR for the Kubernetes cluster"
   type        = string

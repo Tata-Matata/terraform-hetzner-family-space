@@ -1,3 +1,5 @@
+//allows Vault API from private network and Consul gossip from private network
+//never public
 
 resource "hcloud_firewall" "vault_firewall" {
   name = "vault-firewall"

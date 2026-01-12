@@ -45,39 +45,4 @@ resource "hcloud_firewall" "worker" {
   }
 }
 
-resource "hcloud_server" "control_plane" {
-  name        = "k8s-master-1"
-  image       = "ubuntu-22.04"
-  server_type = var.control_plane_type
-  location    = "nbg1"
-  ssh_keys    = [hcloud_ssh_key.main.id]
-
-  firewall_ids = [hcloud_firewall.control_plane.id]
-
-  network {
-    network_id = hcloud_network.k8s.id
-  }
-
-  labels = {
-    role = "control-plane"
-  }
-}
-resource "hcloud_server" "worker" {
-  count       = 2
-  name        = "k8s-worker-${count.index + 1}"
-  image       = "ubuntu-22.04"
-  server_type = var.worker_type
-  location    = "nbg1"
-  ssh_keys    = [hcloud_ssh_key.main.id]
-
-  firewall_ids = [hcloud_firewall.worker.id]
-
-  network {
-    network_id = hcloud_network.k8s.id
-  }
-
-  labels = {
-    role = "worker"
-  }
-}
 
