@@ -13,6 +13,12 @@ variable "subnet_id" {
   type        = string
 }
 
+variable "parent_network_id" {
+  description = "ID of the parent network where the bastion will be attached"
+  type        = string
+  
+}
+
 variable "server_type" {
   default = "cx23"
 }

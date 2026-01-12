@@ -14,7 +14,10 @@ resource "hcloud_server" "bastion" {
 
   # Private network attachment
   network {
-    network_id = var.subnet_id
+    // Hetzner expects here ID of the parent network
+    network_id = var.parent_network_id
+
+    //Hetzner expects here IP that belongs to a subnet of the network
     ip         = local.bastion_private_ip
   }
 
