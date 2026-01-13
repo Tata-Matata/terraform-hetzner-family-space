@@ -22,14 +22,8 @@ locals {
 
 // e.g., for 10.50.1.20 use offset 20
 variable "host_offset" {
-  description = "Host offset inside subnet for Vault IP"
+  description = "Host offset inside subnet server IP"
   type        = number
-  
-  validation {
-    condition     = var.host_offset > 9 && var.host_offset < 26
-    error_message = "Vault host offset must be in range 10-25"
-  }
-
 }
 
 //SERVER
