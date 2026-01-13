@@ -11,12 +11,12 @@ module "vault_server" {
   ssh_public_key_path = var.ssh_public_key_path
 
   #network config
-
+  public_ip_enabled   = false
   // Hetzner expects here ID of the parent network
   parent_network_id = data.terraform_remote_state.core_network.outputs.parent_network_id
 
   //But Hetzner also expects server IP that belongs to a subnet of the network
-  subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
+  subnet_cidr = var.subnet_cidr
 
   // e.g., for 10.50.1.5 use offset 5
   host_offset = var.host_offset_vault
@@ -26,8 +26,8 @@ module "vault_server" {
 module "vault_firewall" {
   source          = "../modules/vault_firewall"
 
-  vpn_subnet_cidr = var.vpn_subnet_cidr
-  subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
+  vault_api_allowed_cidrs = var.vault_api_allowed_cidrs
+  vault_ssh_allowed_cidrs = var.vault_ssh_allowed_cidrs
 
   vault_server_id = module.vault_server.server_id
 }

@@ -11,6 +11,14 @@ variable "parent_network_id" {
 
 }
 
+variable "public_ip_enabled" {
+  description = "Whether the server should have a public IPv4 address"
+  type        = bool
+  default     = false
+  
+}
+
+//SERVER
 variable "server_type" {
   default = "cx23"
 }
@@ -19,14 +27,13 @@ locals {
   host_ip = cidrhost(var.subnet_cidr, host_offset)
 }
 
-
 // e.g., for 10.50.1.20 use offset 20
 variable "host_offset" {
   description = "Host offset inside subnet server IP"
   type        = number
 }
 
-//SERVER
+
 variable "ssh_public_key_path" {
   type = string
 }

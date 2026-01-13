@@ -12,6 +12,8 @@ module "consul_server" {
 
   #network config
 
+  public_ip_enabled   = false
+
   // Hetzner expects here ID of the parent network
   parent_network_id = data.terraform_remote_state.core_network.outputs.parent_network_id
 

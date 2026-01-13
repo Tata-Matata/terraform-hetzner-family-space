@@ -11,7 +11,9 @@ module "bastion_server" {
   ssh_public_key_path = var.ssh_public_key_path
 
   #network config
-
+  //enable public IP only for bastion 
+  public_ip_enabled = true
+  
   // Hetzner expects here ID of the parent network
   parent_network_id = data.terraform_remote_state.core_network.outputs.parent_network_id
 

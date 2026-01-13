@@ -11,6 +11,11 @@ resource "hcloud_server" "server" {
 
   ssh_keys = [hcloud_ssh_key.admin.id]
 
+  public_net {
+    ipv4_enabled = var.public_ip_enabled
+    ipv6_enabled = false
+  }
+
   network {
     // Hetzner expects here ID of the parent network
     network_id = var.parent_network_id
