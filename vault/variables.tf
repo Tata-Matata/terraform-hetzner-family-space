@@ -8,9 +8,14 @@ variable "ssh_public_key_path" {
 }
 
 # Wireguard VPN subnet for cluster admins
-# human-initiated traffic
+# human-initiated traffic to Vault
 variable "vpn_subnet_cidr" {
-  default = "10.100.0.0/24"
+
+  description = "CIDR of the Wireguard VPN subnet"
+  validation {
+    condition     = can(cidrnetmask(var.vpn_subnet_cidr))
+    error_message = "vpn_subnet_cidr must be a valid CIDR block"
+  }
 }
 
 # Private subnet CIDR where Vault server will be deployed
