@@ -20,3 +20,9 @@ resource "hcloud_firewall" "bastion_fw" {
     source_ips = [var.subnet_cidr]
   }
 }
+
+resource "hcloud_firewall_attachment" "bastion_fw_attach" {
+  firewall_id = hcloud_firewall.bastion_fw.id
+  server_ids  = [var.bastion_server_id]
+
+}
