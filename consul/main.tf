@@ -16,7 +16,7 @@ module "consul_server" {
   parent_network_id = data.terraform_remote_state.core_network.outputs.parent_network_id
 
   //But Hetzner also expects server IP that belongs to a subnet of the network
-  subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
+  subnet_cidr = var.subnet_cidr
 
   // e.g., for 10.50.1.5 use offset 5
   host_offset = var.host_offset_consul
@@ -27,7 +27,10 @@ module "consul_firewall" {
 
   #attach to consul server
   consul_server_id = module.consul_server.server_id
-  subnet_cidr      = data.terraform_remote_state.core_network.outputs.subnet_cidr
-  vpn_subnet_cidr  = var.vpn_subnet_cidr
+
+  #firewall rules
+  consul_ssh_allowed_cidrs = var.consul_ssh_allowed_cidrs
+  consul_cluster_cidrs     = var.consul_cluster_cidrs
+  consul_api_allowed_cidrs = var.consul_api_allowed_cidrs
 
 }

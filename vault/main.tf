@@ -1,50 +1,34 @@
-module "vault" {
-  source = "../modules/vault-consul"
+module "vault_server" {
+  source = "../modules/hcloud_server"
 
-  server_name = "vault"
+  #server config
+  server_name     = "vault"
+  server_location = "nbg1"
+  os_image        = "ubuntu-22.04"
+  server_type     = "cx23"
 
-  subnet_cidr         = data.terraform_remote_state.core_network.outputs.subnet_cidr
+  #temp admin access
   ssh_public_key_path = var.ssh_public_key_path
-  server_location     = "nbg1"
-  host_offset         = 10
-  os_image            = "ubuntu-22.04"
-  server_type         = "cx23"
-  parent_network_id   = data.terraform_remote_state.core_network.outputs.parent_network_id
 
-  vault_api_allowed_cidrs = [
-    data.terraform_remote_state.core.outputs.private_subnet_cidr, # private subnet for cluster
-    var.vpn_subnet_cidr # Wireguard VPN subnet
-  ]
+  #network config
 
+  // Hetzner expects here ID of the parent network
+  parent_network_id = data.terraform_remote_state.core_network.outputs.parent_network_id
 
-  vault_ssh_allowed_cidrs = [
-    var.vpn_subnet_cidr
-  ]
+  //But Hetzner also expects server IP that belongs to a subnet of the network
+  subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
+
+  // e.g., for 10.50.1.5 use offset 5
+  host_offset = var.host_offset_vault
 
 }
 
-module "consul" {
-  source = "../modules/vault-consul"
+module "vault_firewall" {
+  source          = "../modules/vault_firewall"
 
-  server_name = "consul"
+  vpn_subnet_cidr = var.vpn_subnet_cidr
+  subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
 
-  subnet_cidr         = data.terraform_remote_state.core_network.outputs.subnet_cidr
-  ssh_public_key_path = var.ssh_public_key_path
-  server_location     = "nbg1"
-  host_offset         = 20
-  os_image            = "ubuntu-22.04"
-  server_type         = "cx23"
-  parent_network_id   = data.terraform_remote_state.core_network.outputs.parent_network_id
-
-   vault_api_allowed_cidrs = [
-    data.terraform_remote_state.core.outputs.private_subnet_cidr, # private subnet for cluster
-    var.vpn_subnet_cidr # Wireguard VPN subnet
-  ]
-
-  vault_ssh_allowed_cidrs = [
-    var.vpn_subnet_cidr
-  ]
-
-
+  vault_server_id = module.vault_server.server_id
 }
 
