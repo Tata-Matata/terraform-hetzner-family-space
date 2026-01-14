@@ -3,68 +3,74 @@ name: Terraform checks
 on:
   pull_request:
   push:
-    branches: [main]
+    branches: [ main ]
 
 jobs:
   terraform:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+    - name: Checkout code
+      uses: actions/checkout@v4
 
-      # -----------------------------
-      # Terraform
-      # -----------------------------
-      - name: Set up Terraform
-        uses: hashicorp/setup-terraform@v3
-        with:
-          terraform_version: 1.14.3
-          terraform_wrapper: false
-      # Formatting consistency
-      - name: Terraform format check
-        run: terraform fmt -check -recursive
+    # -----------------------------
+    # Terraform
+    # -----------------------------
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: 1.14.3
+        terraform_wrapper: false
+    # Formatting consistency
+    - name: Terraform format check
+      run: terraform fmt -check -recursive
 
-      # Syntax & provider correctness
-      - name: Terraform validate
-        run: |
-          find . -type f -name "*.tf" -not -path "./modules/*" -print0 \
-          | xargs -0 -n1 dirname \
-          | sort -u \
-          | while read dir; do
-              echo "Validating $dir"
-              terraform -chdir="$dir" init -backend=false -input=false
-              terraform -chdir="$dir" validate
-            done
+    # Syntax & provider correctness
+    - name: Terraform validate
+      run: |
+        find . -type f -name "*.tf" -not -path "./modules/*" -print0 \
+        | xargs -0 -n1 dirname \
+        | sort -u \
+        | while read dir; do
+            echo "Validating $dir"
+            terraform -chdir="$dir" init -backend=false -input=false
+            terraform -chdir="$dir" validate
+          done
 
-      # -----------------------------
-      # TFLint
-      # -----------------------------
-      #Terraform & provider best practices
-      - name: Install TFLint
-        run: |
-          curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+    # -----------------------------
+    # TFLint
+    # -----------------------------
+    #Terraform & provider best practices
+    - name: Install TFLint
+      run: |
+        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
-      - name: TFLint
-        run: |
-          tflint --init
-          tflint --recursive
+    - name: TFLint
+      run: |
+        tflint --init
+        tflint --recursive
 
-      # -----------------------------
-      # Checkov (IaC security scanning)
-      # -----------------------------
-      - name: Run Checkov
-        uses: bridgecrewio/checkov-action@v12
-        with:
-          quiet: true
-          framework: terraform
+    # -----------------------------
+    # Checkov (IaC security scanning)
+    # -----------------------------
+    - name: Run Checkov
+      uses: bridgecrewio/checkov-action@v12
+      with:
+        quiet: true
+        framework: terraform
 
-      # -----------------------------
-      # Secret scanning
-      # -----------------------------
-      - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload-sarif: false
+    # -----------------------------
+    # Secret scanning
+    # -----------------------------
+    - name: Install Gitleaks
+      run: |
+        curl -sSL https://github.com/gitleaks/gitleaks/releases/latest/download/gitleaks-linux-amd64.tar.gz \ 
+        | tar -xz
+        sudo mv gitleaks /usr/local/bin/gitleaks
+
+    - name: Run Gitleaks
+      run: |
+        gitleaks detect \
+        --source . \
+        --no-git \
+        --redact
