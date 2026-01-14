@@ -8,7 +8,9 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
+    permissions:
+      contents: read
+      security-events: write
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -72,4 +74,15 @@ jobs:
         gitleaks detect \
         --source . \
         --no-git \
-        --redact
+        --redact \
+        --report-format sarif \
+        --report-path /tmp/gitleaks.sarif
+
+    # -----------------------------
+    # Publish SARIF results
+    # -----------------------------
+    - name: Upload Gitleaks SARIF
+      uses: github/codeql-action/upload-sarif@v3
+      continue-on-error: true
+      with:
+        sarif_file: /tmp/gitleaks.sarif
