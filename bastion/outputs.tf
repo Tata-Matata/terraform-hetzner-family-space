@@ -10,6 +10,6 @@ output "bastion_private_ip" {
   value = module.bastion_server.server_private_ip
 }
 
-output "bastion_server_name" {
-  value = module.bastion_server.server_name
+output "bastion_role_label" {
+  value = module.bastion_server.server_role_label
 }

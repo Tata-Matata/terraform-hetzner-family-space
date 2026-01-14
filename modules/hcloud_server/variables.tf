@@ -24,7 +24,7 @@ variable "server_type" {
 }
 
 locals {
-  host_ip = cidrhost(var.subnet_cidr, host_offset)
+  host_ip = cidrhost(var.subnet_cidr, var.host_offset)
 }
 
 // e.g., for 10.50.1.20 use offset 20
@@ -34,8 +34,9 @@ variable "host_offset" {
 }
 
 
-variable "ssh_public_key_path" {
-  type = string
+variable "ssh_key_ids" {
+  description = "List of Hetzner SSH key IDs to inject"
+  type        = list(string)
 }
 
 variable "server_location" {
@@ -50,6 +51,12 @@ variable "os_image" {
 
 variable "server_name" {
   description = "Name of the server to be created"
+  type        = string
+  
+}
+
+variable "server_role" {
+  description = "Role label to assign to the server"
   type        = string
   
 }

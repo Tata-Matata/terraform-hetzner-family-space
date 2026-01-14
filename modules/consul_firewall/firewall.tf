@@ -43,10 +43,9 @@ resource "hcloud_firewall" "consul_fw" {
     port       = "8500"
     source_ips = var.consul_api_allowed_cidrs
   }
+
+  apply_to {
+    label_selector = "role=consul"
+  }
 }
 
-resource "hcloud_firewall_attachment" "consul_fw_attach" {
-  firewall_id = hcloud_firewall.consul_fw.id
-  server_ids  = [var.consul_server_id]
-
-}

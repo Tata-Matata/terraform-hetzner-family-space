@@ -1,15 +1,10 @@
-resource "hcloud_ssh_key" "admin" {
-  name       = "temp-ssh-access-key"
-  public_key = file(var.ssh_public_key_path)
-}
-
 resource "hcloud_server" "server" {
   name        = var.server_name
   image       = var.os_image
   server_type = var.server_type
   location    = var.server_location
 
-  ssh_keys = [hcloud_ssh_key.admin.id]
+  ssh_keys = var.ssh_key_ids
 
   public_net {
     ipv4_enabled = var.public_ip_enabled
@@ -24,9 +19,19 @@ resource "hcloud_server" "server" {
     ip = local.host_ip
   }
 
-  //remove in case of recovery
+  lifecycle {
+    precondition {
+      condition     = length(var.ssh_key_ids) > 0
+      error_message = "Required SSH key missing. Apply global/ssh-keys first."
+    }
+  }
+
+  /* //remove in case of recovery
   lifecycle {
     prevent_destroy = true
+  } */
+  labels = {
+    role = var.server_role
   }
 }
 

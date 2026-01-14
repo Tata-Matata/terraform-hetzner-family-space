@@ -19,10 +19,9 @@ resource "hcloud_firewall" "bastion_fw" {
     port       = "22"
     source_ips = [var.subnet_cidr]
   }
+
+  apply_to {
+    label_selector = "role=bastion"
+  }
 }
 
-resource "hcloud_firewall_attachment" "bastion_fw_attach" {
-  firewall_id = hcloud_firewall.bastion_fw.id
-  server_ids  = [var.bastion_server_id]
-
-}

@@ -19,10 +19,10 @@ resource "hcloud_firewall" "vault_fw" {
     port       = "8200"
     source_ips = var.vault_api_allowed_cidrs
   }
+
+  apply_to {
+    label_selector = "role=vault"
+  }
 }
 
-resource "hcloud_firewall_attachment" "vault_fw_attach" {
-  firewall_id = hcloud_firewall.vault_fw.id
-  server_ids  = [var.vault_server_id]
 
-}

@@ -8,7 +8,7 @@ module "bastion_server" {
   server_type = "cx23"
 
   #temp admin access
-  ssh_public_key_path = var.ssh_public_key_path
+  ssh_key_ids          = [data.hcloud_ssh_key.admin.id]
 
   #network config
   //enable public IP only for bastion 
@@ -22,6 +22,9 @@ module "bastion_server" {
 
   // e.g., for 10.50.1.5 use offset 5
   host_offset = var.host_offset_bastion
+
+  //for attaching firewall
+  server_role = "bastion"
 }
 
 module "bastion_firewall" {

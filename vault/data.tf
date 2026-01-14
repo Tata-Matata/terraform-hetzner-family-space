@@ -28,6 +28,10 @@ data "terraform_remote_state" "tf_state_network" {
 data "terraform_remote_state" "core_network" {
   backend = "local" # Local backend for testing
   config = {
-    path = "../core-network/terraform.tfstate"
+    path = "../core_network/terraform.tfstate"
   }
+}
+
+data "hcloud_ssh_key" "admin" {
+  name = "admin-bootstrap-key"
 }
