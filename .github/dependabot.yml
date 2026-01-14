@@ -1,0 +1,18 @@
+version: 2
+
+updates:
+  # -----------------------------
+  # GitHub Actions version updates
+  # -----------------------------
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+
+  # -----------------------------
+  # Pre-commit hooks (rev updates)
+  # -----------------------------
+  - package-ecosystem: "pre-commit"
+    directory: "/"
+    schedule:
+      interval: "monthly"
