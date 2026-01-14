@@ -15,12 +15,13 @@ variable "public_ip_enabled" {
   description = "Whether the server should have a public IPv4 address"
   type        = bool
   default     = false
-  
+
 }
 
 //SERVER
 variable "server_type" {
   default = "cx23"
+  type    = string
 }
 
 locals {
@@ -46,17 +47,17 @@ variable "server_location" {
 
 variable "os_image" {
   default = "ubuntu-22.04"
-
+  type    = string
 }
 
 variable "server_name" {
   description = "Name of the server to be created"
   type        = string
-  
+
 }
 
 variable "server_role" {
   description = "Role label to assign to the server"
   type        = string
-  
+
 }

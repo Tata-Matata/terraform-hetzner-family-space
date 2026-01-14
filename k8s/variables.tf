@@ -1,6 +1,7 @@
 variable "hcloud_token" {
-  type      = string
-  sensitive = true
+  type        = string
+  description = "Hetzner Cloud API token"
+  sensitive   = true
 }
 
 variable "ssh_public_key_path" {
@@ -9,14 +10,14 @@ variable "ssh_public_key_path" {
 }
 
 variable "server_location" {
-  type = string
+  type    = string
   default = "nbg1" //Nuremberg
 }
 
 variable "os_image" {
   type    = string
   default = "ubuntu-22.04"
-  
+
 }
 
 variable "cluster_private_cidr" {
@@ -26,10 +27,12 @@ variable "cluster_private_cidr" {
 }
 
 variable "control_plane_type" {
+  type    = string
   default = "cx23"
 }
 
 variable "worker_type" {
+  type    = string
   default = "cx23"
 }
 

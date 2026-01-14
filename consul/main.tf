@@ -8,11 +8,11 @@ module "consul_server" {
   server_type     = "cx23"
 
   #temp admin access
-  ssh_key_ids          = [data.hcloud_ssh_key.admin.id]
+  ssh_key_ids = [data.hcloud_ssh_key.admin.id]
 
   #network config
 
-  public_ip_enabled   = false
+  public_ip_enabled = false
 
   // Hetzner expects here ID of the parent network
   parent_network_id = data.terraform_remote_state.core_network.outputs.parent_network_id
@@ -29,9 +29,6 @@ module "consul_server" {
 
 module "consul_firewall" {
   source = "../modules/consul_firewall"
-
-  #attach to consul server
-  consul_server_id = module.consul_server.server_id
 
   #firewall rules
   consul_ssh_allowed_cidrs = local.consul_ssh_allowed_cidrs

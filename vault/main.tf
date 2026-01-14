@@ -32,6 +32,5 @@ module "vault_firewall" {
   vault_api_allowed_cidrs = local.vault_api_allowed_cidrs
   vault_ssh_allowed_cidrs = local.vault_ssh_allowed_cidrs
 
-  vault_server_id = module.vault_server.server_id
 }
 
