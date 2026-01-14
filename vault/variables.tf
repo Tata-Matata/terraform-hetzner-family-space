@@ -1,12 +1,14 @@
 variable "hcloud_token" {
-  sensitive = true
+  type        = string
+  description = "Hetzner Cloud API token"
+  sensitive   = true
 }
 
 
 # Wireguard VPN subnet for cluster admins
 # human-initiated traffic to Vault
 variable "vpn_subnet_cidr" {
-
+  type        = string
   description = "CIDR of the Wireguard VPN subnet"
   validation {
     condition     = can(cidrnetmask(var.vpn_subnet_cidr))
@@ -15,7 +17,7 @@ variable "vpn_subnet_cidr" {
 }
 
 
-locals { 
+locals {
   # Private subnet CIDR where Vault server will be deployed
   subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
 

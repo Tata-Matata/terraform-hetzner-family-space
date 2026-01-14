@@ -1,0 +1,40 @@
+repos:
+  # -----------------------------
+  # 1. Terraform formatting & validation
+  # -----------------------------
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.105.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+      - id: terraform_tflint
+
+  # -----------------------------
+  # 2. Security scanning (IaC)
+  # -----------------------------
+  - repo: https://github.com/bridgecrewio/checkov
+    rev: 3.2.497
+    hooks:
+      - id: checkov
+        args:
+          - --quiet
+        #  - --skip-check CKV_TF_1    #optional: example skip
+        files: \.tf$
+
+  # -----------------------------
+  # 3. Secret scanning
+  # -----------------------------
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.30.0
+    hooks:
+      - id: gitleaks
+
+  # -----------------------------
+  # 4. Hard guard: block tfstate files
+  # -----------------------------
+  - repo: local
+    hooks:
+      - id: block-tfstate
+        name: Block Terraform state files
+        entry: bash -c 'git diff --cached --name-only | grep -E "\.tfstate" && exit 1 || exit 0'
+        language: system

@@ -23,7 +23,7 @@ resource "hcloud_server" "control_plane" {
 resource "hcloud_server" "worker" {
   count       = 2
   name        = "k8s-worker-${count.index + 1}"
-  image       = var.os_image 
+  image       = var.os_image
   server_type = var.worker_type
   location    = var.server_location
   ssh_keys    = [hcloud_ssh_key.main.id]

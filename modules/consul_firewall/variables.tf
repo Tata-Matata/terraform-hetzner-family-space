@@ -24,8 +24,3 @@ variable "consul_api_allowed_cidrs" {
 
 }
 
-variable "consul_server_id" {
-  description = "ID of the Consul server to attach the firewall to"
-  type        = string
-
-}

@@ -1,5 +1,7 @@
 variable "hcloud_token" {
-  sensitive = true
+  type        = string
+  description = "Hetzner Cloud API token"
+  sensitive   = true
 }
 
 
@@ -18,7 +20,7 @@ variable "host_offset_consul" {
 # Wireguard VPN subnet for cluster admins
 # human-initiated traffic to Consul
 variable "vpn_subnet_cidr" {
-
+  type        = string
   description = "CIDR of the Wireguard VPN subnet"
   validation {
     condition     = can(cidrnetmask(var.vpn_subnet_cidr))
