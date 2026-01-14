@@ -66,5 +66,5 @@ jobs:
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITLEAKS_REPORT_FORMAT: sarif
-          GITLEAKS_REPORT_PATH: /tmp/gitleaks.sarif
+        with:
+          upload-sarif: false
