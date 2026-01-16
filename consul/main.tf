@@ -24,7 +24,9 @@ module "consul_server" {
   host_offset = var.host_offset_consul
 
   //for attaching firewall
-  server_role = "consul"
+  server_labels = {
+    role = "consul"
+  }
 }
 
 module "consul_firewall" {

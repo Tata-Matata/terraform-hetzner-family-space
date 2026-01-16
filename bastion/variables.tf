@@ -4,6 +4,18 @@ variable "hcloud_token" {
   sensitive   = true
 }
 
+variable "min_ip" {
+  description = "Minimum IP address in the subnet"
+  type        = number
+  default     = 1
+}
+
+variable "max_ip" {
+  description = "Maximum IP address in the subnet"
+  type        = number
+  default     = 10
+
+}
 
 variable "host_offset_bastion" {
   description = "Host offset for Bastion server IP in the subnet"
@@ -11,8 +23,13 @@ variable "host_offset_bastion" {
   default     = 5
 
   validation {
-    condition     = var.host_offset_bastion > 0 && var.host_offset_bastion < 10
-    error_message = "Host offset must be in range 1-9"
+    condition = alltrue([
+
+      var.host_offset_bastion >= var.min_ip,
+      var.host_offset_bastion <= var.max_ip
+    ])
+
+    error_message = "Host offset must be in range ${var.min_ip}-${var.max_ip} to avoid IP conflicts in the subnet."
   }
 
 }

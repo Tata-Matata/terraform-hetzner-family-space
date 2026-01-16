@@ -30,9 +30,7 @@ resource "hcloud_server" "server" {
   lifecycle {
     prevent_destroy = true
   } */
-  labels = {
-    role = var.server_role
-  }
+  labels = var.server_labels
 }
 
 

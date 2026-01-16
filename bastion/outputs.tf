@@ -11,5 +11,5 @@ output "bastion_private_ip" {
 }
 
 output "bastion_role_label" {
-  value = module.bastion_server.server_role_label
+  value = module.bastion_server.server_labels
 }

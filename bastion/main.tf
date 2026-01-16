@@ -24,7 +24,9 @@ module "bastion_server" {
   host_offset = var.host_offset_bastion
 
   //for attaching firewall
-  server_role = "bastion"
+  server_labels = {
+    role = "bastion"
+  }
 }
 
 module "bastion_firewall" {
