@@ -42,21 +42,21 @@ variable "k8s_api_port" {
   type        = number
   description = "K8s API server port"
   default     = 6443
-  
+
 }
 
 variable "k8s_kubelet_port" {
   type        = number
   description = "Kubelet HTTP API port"
   default     = 10250
-  
+
 }
 
 variable "k8s_calico_port" {
   type        = number
   description = "K8s Calico VXLAN port"
   default     = 4789
-  
+
 }
 
 

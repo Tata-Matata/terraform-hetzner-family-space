@@ -97,25 +97,25 @@ variable "os_image" {
   type        = string
   description = "Operating system image for the server"
   default     = "ubuntu-22.04"
-} 
+}
 
 variable "hetzner_server_type" {
   type        = string
   description = "Hetzner server type for K8s nodes"
   default     = "cx23"
-  
+
 }
 
 variable "hetzner_server_location" {
   type        = string
   description = "Hetzner server location for K8s nodes"
   default     = "nbg1"
-  
+
 }
 
 variable "common_k8s_node_label" {
   type        = string
   description = "Common label for all K8s nodes"
   default     = "k8s"
-  
+
 }
