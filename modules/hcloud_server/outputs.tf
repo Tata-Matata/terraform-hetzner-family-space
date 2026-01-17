@@ -10,6 +10,6 @@ output "server_private_ip" {
   value = one(hcloud_server.server.network).ip
 }
 
-output "server_role_label" {
-  value = hcloud_server.server.labels["role"]
+output "server_labels" {
+  value = [for k, v in var.server_labels : "${k}=${v}"]
 }

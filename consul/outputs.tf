@@ -6,7 +6,7 @@ output "consul_server_id" {
   value = module.consul_server.server_id
 }
 
-output "consul_server_role_label" {
-  value = module.consul_server.server_role_label
+output "consul_server_labels" {
+  value = module.consul_server.server_labels
 
 }

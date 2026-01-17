@@ -1,5 +1,5 @@
 //Bastion server exposes WireGuard VPN (UDP 51820)
-//Restricts SSH to only private network (VPN subnet)
+//Restricts SSH from only VPN subnet
 
 resource "hcloud_firewall" "bastion_fw" {
   name = "bastion-fw"
@@ -17,7 +17,7 @@ resource "hcloud_firewall" "bastion_fw" {
     direction  = "in"
     protocol   = "tcp"
     port       = "22"
-    source_ips = [var.subnet_cidr]
+    source_ips = [var.vpn_subnet_cidr]
   }
 
   apply_to {

@@ -24,14 +24,17 @@ module "bastion_server" {
   host_offset = var.host_offset_bastion
 
   //for attaching firewall
-  server_role = "bastion"
+  server_labels = {
+    role = "bastion"
+  }
 }
 
 module "bastion_firewall" {
   source = "../modules/bastion_firewall"
 
-  #attach to bastion server
-  subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
+  #access to Bastion server only from VPN subnet via ssh
+  vpn_subnet_cidr = var.vpn_subnet_cidr
+
 }
 
 

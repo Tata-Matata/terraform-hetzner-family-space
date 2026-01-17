@@ -22,8 +22,9 @@ module "vault_server" {
   host_offset = var.host_offset_vault
 
   //for attaching firewall
-  server_role = "vault"
-
+  server_labels = {
+    role = "vault"
+  }
 }
 
 module "vault_firewall" {

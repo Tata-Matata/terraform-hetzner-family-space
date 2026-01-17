@@ -56,8 +56,9 @@ variable "server_name" {
 
 }
 
-variable "server_role" {
-  description = "Role label to assign to the server"
-  type        = string
 
+variable "server_labels" {
+  description = "Labels to assign to the server"
+  type        = map(string)
+  default     = {}
 }

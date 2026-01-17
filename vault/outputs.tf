@@ -8,6 +8,6 @@ output "vault_private_ip" {
 }
 
 output "vault_role_label" {
-  value = module.vault_server.server_role_label
+  value = module.vault_server.server_labels
 
 }

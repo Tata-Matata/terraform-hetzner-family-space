@@ -1,11 +1,16 @@
-output "control_plane_ip" {
-  value = hcloud_server.control_plane.ipv4_address
+output "control_plane_private_ips" {
+  value = [for cp in module.k8s_controlplane_server : cp.server_private_ip]
 }
 
-output "worker_ips" {
-  value = [for w in hcloud_server.worker : w.ipv4_address]
+output "controlplane_server_labels" {
+  value = [for cp in module.k8s_controlplane_server : cp.server_labels]
 }
 
-output "server_types" {
-  value = [for s in data.hcloud_server_types.all.server_types : s.name]
+output "worker_private_ips" {
+  value = [for w in module.k8s_worker_server : w.server_private_ip]
 }
+
+output "worker_server_labels" {
+  value = [for w in module.k8s_worker_server : w.server_labels]
+}
+
