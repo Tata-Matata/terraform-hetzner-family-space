@@ -1,8 +1,9 @@
 module "vault_server" {
   source = "../modules/hcloud_server"
+  count  = 1
 
   #server config
-  server_name     = "vault"
+  server_name     = "vault-${count.index + 1}"
   server_location = "nbg1"
   os_image        = "ubuntu-22.04"
   server_type     = "cx23"

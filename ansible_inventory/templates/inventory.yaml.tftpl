@@ -1,0 +1,34 @@
+consul:
+  hosts:
+%{ for idx, ip in consul_private_ips ~}
+    consul-${idx + 1}:
+      ansible_host: ${ip}
+%{ endfor ~}
+
+
+vault:
+  hosts:
+%{ for idx, ip in vault_private_ips ~}
+    vault-${idx + 1}:
+      ansible_host: ${ip}
+%{ endfor ~}
+
+bastion:
+  hosts:
+    bastion-1:
+      ansible_connection: local
+
+k8s_controlplane:
+  hosts:
+%{ for idx, ip in k8s_controlplane_ips ~}
+    k8s_controlplane-${idx + 1}:
+      ansible_host: ${ip}
+%{ endfor ~}
+
+
+k8s_worker:
+  hosts:
+%{ for idx, ip in k8s_worker_ips ~}
+    k8s_worker-${idx + 1}:
+      ansible_host: ${ip}
+%{ endfor ~}

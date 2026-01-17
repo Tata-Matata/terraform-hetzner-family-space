@@ -1,13 +1,19 @@
-output "vault_server_id" {
-  value = module.vault_server.server_id
+output "vault_server_ids" {
+  value = [
+    for server in module.vault_server : server.server_id
+  ]
 }
 
 
-output "vault_private_ip" {
-  value = module.vault_server.server_private_ip
+output "vault_private_ips" {
+  value = [
+    for server in module.vault_server : server.server_private_ip
+  ]
 }
 
-output "vault_role_label" {
-  value = module.vault_server.server_labels
+output "vault_server_labels" {
+  value = [
+    for server in module.vault_server : server.server_labels
+  ]
 
 }
