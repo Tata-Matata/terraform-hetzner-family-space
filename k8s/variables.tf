@@ -62,33 +62,38 @@ variable "host_offset_k8s_worker" {
 
 }
 
-variable "vpn_subnet_cidr" {
-  type        = string
-  description = "CIDR of the Wireguard VPN subnet"
-  validation {
-    condition     = can(cidrnetmask(var.vpn_subnet_cidr))
-    error_message = "vpn_subnet_cidr must be a valid CIDR block"
-  }
-}
-
 // FIREWALL
 locals {
-  # CIDR of the private network that is allowed to access Consul
+  # CIDR of the private subnet (machine-to-machine)
   subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
 
-  # port 22 only from VPN subnet
-  k8s_ssh_allowed_cidrs = [var.vpn_subnet_cidr]
+  # CIDR of Bastion host(s)
+  bastion_ip   = data.terraform_remote_state.bastion.outputs.bastion_private_ip
+  bastion_cidr = "${local.bastion_ip}/32"
 
-  # port 10250 (Kubelet HTTP API) from private subnet
-  # used by Vault, automation
-  k8s_kubelet_api_allowed_cidrs = [local.subnet_cidr]
+
+  # Human entry point (ssh from Bastion only)
+  human_entry_cidrs = [
+    local.bastion_cidr
+  ]
+
+  # Internal service communication
+  machine_cidrs = [
+    local.subnet_cidr
+  ]
+
+  # port 22 human access only from Bastion
+  k8s_ssh_allowed_cidrs = local.human_entry_cidrs
+
+  # port 10250 (Kubelet HTTP API) from machine CIDRs only
+  k8s_kubelet_api_allowed_cidrs = local.machine_cidrs
 
   # port 6443 (HTTP API) 
-  # private network for K8s nodes + humans / CI via WireGuard VPN
-  k8s_api_allowed_cidrs = [local.subnet_cidr, var.vpn_subnet_cidr]
+  # from machine CIDRs + Bastion for admin access via kubectl
+  k8s_api_allowed_cidrs = concat(local.machine_cidrs, local.human_entry_cidrs)
 
   # port 4789 UDP (Calico VXLAN mode) from private subnet
-  k8s_calico_vxlan_allowed_cidrs = [local.subnet_cidr]
+  k8s_calico_vxlan_allowed_cidrs = local.machine_cidrs
 
 }
 

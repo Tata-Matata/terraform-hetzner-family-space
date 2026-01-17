@@ -32,8 +32,9 @@ module "bastion_server" {
 module "bastion_firewall" {
   source = "../modules/bastion_firewall"
 
-  #attach to bastion server
-  subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
+  #access to Bastion server only from VPN subnet via ssh
+  vpn_subnet_cidr = var.vpn_subnet_cidr
+
 }
 
 

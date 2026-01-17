@@ -4,33 +4,30 @@ variable "hcloud_token" {
   sensitive   = true
 }
 
-
-# Wireguard VPN subnet for cluster admins
-# human-initiated traffic to Vault
-variable "vpn_subnet_cidr" {
-  type        = string
-  description = "CIDR of the Wireguard VPN subnet"
-  validation {
-    condition     = can(cidrnetmask(var.vpn_subnet_cidr))
-    error_message = "vpn_subnet_cidr must be a valid CIDR block"
-  }
-}
-
-
 locals {
   # Private subnet CIDR where Vault server will be deployed
   subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
 
-  # port 8200 from VPN subnet and private subnet
-  vault_api_allowed_cidrs = [
-    local.subnet_cidr,
-    var.vpn_subnet_cidr
+  # CIDR of Bastion host(s)
+  bastion_ip   = data.terraform_remote_state.bastion.outputs.bastion_private_ip
+  bastion_cidr = "${local.bastion_ip}/32"
+
+
+  # Human entry point (ssh from Bastion only)
+  human_entry_cidrs = [
+    local.bastion_cidr
   ]
 
-  # port 22 only from VPN subnet
-  vault_ssh_allowed_cidrs = [
-    var.vpn_subnet_cidr
+  # Internal service communication
+  machine_cidrs = [
+    local.subnet_cidr
   ]
+
+  # port 8200 from private subnet
+  vault_api_allowed_cidrs = local.machine_cidrs
+
+  # port 22 only from Bastion
+  vault_ssh_allowed_cidrs = local.human_entry_cidrs
 }
 
 # Offset for Vault server IP in the private subnet

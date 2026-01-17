@@ -17,32 +17,36 @@ variable "host_offset_consul" {
 }
 
 # FIREWALL
-# Wireguard VPN subnet for cluster admins
-# human-initiated traffic to Consul
-variable "vpn_subnet_cidr" {
-  type        = string
-  description = "CIDR of the Wireguard VPN subnet"
-  validation {
-    condition     = can(cidrnetmask(var.vpn_subnet_cidr))
-    error_message = "vpn_subnet_cidr must be a valid CIDR block"
-  }
-}
 
 locals {
-  # CIDR of the private network that is allowed to access Consul
+  # CIDR of the private subnet
   subnet_cidr = data.terraform_remote_state.core_network.outputs.subnet_cidr
 
-  # port 22 only from VPN subnet
-  consul_ssh_allowed_cidrs = [var.vpn_subnet_cidr]
+  # CIDR of Bastion host(s)
+  bastion_ip   = data.terraform_remote_state.bastion.outputs.bastion_private_ip
+  bastion_cidr = "${local.bastion_ip}/32"
+
+  # Human entry point (ssh from Bastion only)
+  human_entry_cidrs = [
+    local.bastion_cidr
+  ]
+
+  # Internal service communication
+  machine_cidrs = [
+    local.subnet_cidr
+  ]
+
+  # port 22 only from bastion
+  consul_ssh_allowed_cidrs = local.human_entry_cidrs
 
   # port 8300 (Consul Servers talking to each other)
   # 8301 (Serf gossip protocol used by Consul server and agents) 
   # only from private subnet
-  consul_cluster_cidrs = [local.subnet_cidr]
+  consul_cluster_cidrs = local.machine_cidrs
 
-  # port 8500 (HTTP API) from private subnet and VPN
-  # used by Vault, automation
-  consul_api_allowed_cidrs = [local.subnet_cidr, var.vpn_subnet_cidr]
+  # port 8500 (HTTP API) from private subnet
+  consul_api_allowed_cidrs = local.machine_cidrs
+
 
 }
 

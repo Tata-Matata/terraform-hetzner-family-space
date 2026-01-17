@@ -35,3 +35,10 @@ data "terraform_remote_state" "core_network" {
 data "hcloud_ssh_key" "admin" {
   name = "admin-bootstrap-key"
 }
+
+data "terraform_remote_state" "bastion" {
+  backend = "local" # Local backend for testing
+  config = {
+    path = "../bastion/terraform.tfstate"
+  }
+}
