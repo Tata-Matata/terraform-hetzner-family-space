@@ -26,6 +26,8 @@ resource "hcloud_server" "server" {
     }
   }
 
+  user_data = var.user_data
+
   /* //remove in case of recovery
   lifecycle {
     prevent_destroy = true

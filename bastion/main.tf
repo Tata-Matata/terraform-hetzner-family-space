@@ -27,6 +27,16 @@ module "bastion_server" {
   server_labels = {
     role = "bastion"
   }
+
+  //inject private key for ansible access
+  user_data = <<-EOF
+  #cloud-config
+  write_files:
+  - path: /root/.ssh/bootstrap_ansible
+    permissions: "0600"
+    content: |
+      ${data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_private_key}
+  EOF
 }
 
 module "bastion_firewall" {

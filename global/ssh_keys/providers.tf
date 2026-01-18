@@ -5,6 +5,10 @@ terraform {
       source  = "hetznercloud/hcloud"
       version = "~> 1.58"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.1"
+    }
   }
 }
 
