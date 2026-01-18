@@ -56,6 +56,12 @@ variable "server_name" {
 
 }
 
+variable "user_data" {
+  description = "User data script to initialize the server"
+  type        = string
+  default     = ""
+
+}
 
 variable "server_labels" {
   description = "Labels to assign to the server"

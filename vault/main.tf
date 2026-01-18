@@ -8,8 +8,8 @@ module "vault_server" {
   os_image        = "ubuntu-22.04"
   server_type     = "cx23"
 
-  #temp admin access
-  ssh_key_ids = [data.hcloud_ssh_key.admin.id]
+  #temp ssh access for Ansible from Bastion
+  ssh_key_ids = [data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_public_key]
 
   #network config
   public_ip_enabled = false

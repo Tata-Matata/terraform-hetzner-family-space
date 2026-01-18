@@ -8,8 +8,8 @@ module "k8s_controlplane_server" {
   os_image        = var.os_image
   server_type     = var.hetzner_server_type
 
-  #temp admin access
-  ssh_key_ids = [data.hcloud_ssh_key.admin.id]
+  #temp ssh access for Ansible from Bastion
+  ssh_key_ids = [data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_public_key]
 
   #network config
   //enable public IP only for bastion 
@@ -43,8 +43,8 @@ module "k8s_worker_server" {
   os_image        = var.os_image
   server_type     = var.hetzner_server_type
 
-  #temp admin access
-  ssh_key_ids = [data.hcloud_ssh_key.admin.id]
+  #temp ssh access for Ansible from Bastion
+  ssh_key_ids = [data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_public_key]
 
   #network config
   //enable public IP only for bastion 

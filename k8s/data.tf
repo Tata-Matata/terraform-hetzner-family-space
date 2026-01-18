@@ -32,13 +32,16 @@ data "terraform_remote_state" "core_network" {
   }
 }
 
-data "hcloud_ssh_key" "admin" {
-  name = "admin-bootstrap-key"
-}
-
 data "terraform_remote_state" "bastion" {
   backend = "local" # Local backend for testing
   config = {
     path = "../bastion/terraform.tfstate"
+  }
+}
+
+data "terraform_remote_state" "global_ssh_keys" {
+  backend = "local" # Local backend for testing
+  config = {
+    path = "../global/ssh_keys/terraform.tfstate"
   }
 }
