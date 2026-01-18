@@ -29,14 +29,14 @@ module "bastion_server" {
   }
 
   //inject private key for ansible access
-  user_data = <<-EOF
-  #cloud-config
-  write_files:
-  - path: /root/.ssh/bootstrap_ansible
-    permissions: "0600"
-    content: |
-      ${data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_private_key}
-  EOF
+  user_data = templatefile(
+    "${path.module}/cloud-init/bastion.yaml.tftpl",
+    {
+      private_key_b64 = base64encode(
+        data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_private_key
+      )
+    }
+  )
 }
 
 module "bastion_firewall" {
