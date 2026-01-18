@@ -1,0 +1,11 @@
+#cloud-config
+write_files:
+  - path: /root/.ssh/ansible_ed25519
+    owner: root:root
+    permissions: "0600"
+    encoding: b64
+    content: ${private_key_b64}
+
+runcmd:
+  - mkdir -p /root/.ssh
+  - chmod 700 /root/.ssh
