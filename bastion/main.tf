@@ -47,4 +47,9 @@ module "bastion_firewall" {
 
 }
 
-
+//Bastion server as default gateway for egress traffic from private network
+resource "hcloud_network_route" "egress_via_bastion" {
+  network_id  = data.terraform_remote_state.core_network.outputs.parent_network_id
+  destination = "0.0.0.0/0"
+  gateway     = module.bastion_server.server_private_ip
+}

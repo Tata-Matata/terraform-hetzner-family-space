@@ -9,3 +9,16 @@ write_files:
 runcmd:
   - mkdir -p /root/.ssh
   - chmod 700 /root/.ssh
+  - pipx ensurepath
+  - pipx install ansible-core
+  - ln -s /root/.local/bin/ansible /usr/local/bin/ansible
+  - ln -s /root/.local/bin/ansible-playbook /usr/local/bin/ansible-playbook
+  - ansible --version
+  
+packages:
+  - python3
+  - python3-venv
+  - python3-pip
+  - pipx
+  - git
+  - rsync
