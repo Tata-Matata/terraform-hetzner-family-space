@@ -46,3 +46,9 @@ data "terraform_remote_state" "k8s" {
   }
 }
 
+data "terraform_remote_state" "bastion" {
+  backend = "local" # Local backend for testing
+  config = {
+    path = "../bastion/terraform.tfstate"
+  }
+}

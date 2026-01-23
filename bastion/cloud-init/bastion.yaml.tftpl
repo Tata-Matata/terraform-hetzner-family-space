@@ -14,6 +14,16 @@ runcmd:
   - ln -s /root/.local/bin/ansible /usr/local/bin/ansible
   - ln -s /root/.local/bin/ansible-playbook /usr/local/bin/ansible-playbook
   - ansible --version
+
+  # Preload GitHub host key into known hosts (avoid interactive prompt)
+  - |
+    cat << 'EOF' >> /root/.ssh/known_hosts 
+    ${github_ssh_host_key} 
+    EOF
+  - chmod 600 /root/.ssh/known_hosts
+
+  # Clone Ansible repo
+  - git clone https://github.com/Tata-Matata/ansible-family-space.git /opt/ansible-family-space
   
 packages:
   - python3

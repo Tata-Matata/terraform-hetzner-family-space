@@ -4,6 +4,13 @@ variable "hcloud_token" {
   sensitive   = true
 }
 
+variable "github_ssh_host_key" {
+  description = "Pinned GitHub SSH ed25519 host key"
+  type        = string
+  default     = "github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
+
+}
+
 variable "min_ip" {
   description = "Minimum IP address in the subnet"
   type        = number

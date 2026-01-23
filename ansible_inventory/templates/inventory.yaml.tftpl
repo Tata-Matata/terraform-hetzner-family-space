@@ -17,6 +17,7 @@ bastion:
   hosts:
     bastion-1:
       ansible_connection: local
+      bastion_private_ip: ${bastion_private_ip}
 
 k8s_controlplane:
   hosts:
