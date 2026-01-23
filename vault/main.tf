@@ -26,6 +26,12 @@ module "vault_server" {
   server_labels = {
     role = "vault"
   }
+
+  //cloud-init routing config to set default route via Bastion and configure DNS
+  user_data = templatefile(
+    "${path.root}/../templates/cloud-init/routing.yaml.tftpl",
+    {}
+  )
 }
 
 module "vault_firewall" {
