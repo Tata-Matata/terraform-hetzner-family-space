@@ -30,7 +30,7 @@ module "consul_server" {
   }
 
   user_data = templatefile(
-    "${path.module}/cloud-init/routing.yaml.tftpl",
+    "${path.root}/../templates/cloud-init/routing.yaml.tftpl",
     {}
   )
 
