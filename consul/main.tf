@@ -29,7 +29,11 @@ module "consul_server" {
     role = "consul"
   }
 
-  user_data = null
+  user_data = templatefile(
+    "${path.module}/cloud-init/routing.yaml.tftpl",
+    {}
+  )
+
 }
 
 module "consul_firewall" {

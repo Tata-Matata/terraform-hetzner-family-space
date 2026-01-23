@@ -35,6 +35,7 @@ module "bastion_server" {
       private_key_b64 = base64encode(
         data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_private_key
       )
+      github_ssh_host_key = var.github_ssh_host_key
     }
   )
 }
