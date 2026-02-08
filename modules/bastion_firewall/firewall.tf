@@ -12,7 +12,7 @@ resource "hcloud_firewall" "bastion_fw" {
     source_ips = ["0.0.0.0/0", "::/0"]
   }
 
-  # SSH only from private network (VPN subnet)
+  # SSH to Bastion only from admin home network (VPN subnet)
   rule {
     direction  = "in"
     protocol   = "tcp"
