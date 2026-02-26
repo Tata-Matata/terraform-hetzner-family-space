@@ -1,10 +1,13 @@
 output "ansible_access_public_key" {
   description = "to be added to authorized_keys on Consul and Vault servers for Ansible access via ssh from Bastion"
-  value       = hcloud_ssh_key.hcloud_ansible_access_pub_ssh_key.id
+  value       = hcloud_ssh_key.hcloud_ansible_access_pub_ssh_key.public_key
 
   precondition {
-    condition     = length(trimspace(hcloud_ssh_key.hcloud_ansible_access_pub_ssh_key.id)) > 0
-    error_message = "Ansible public key must not be empty."
+    condition = can(regex(
+      "^ssh-ed25519\\s+[A-Za-z0-9+/=]+",
+      trimspace(hcloud_ssh_key.hcloud_ansible_access_pub_ssh_key.public_key)
+    ))
+    error_message = "Ansible public key must be a valid SSH public key string"
   }
 }
 

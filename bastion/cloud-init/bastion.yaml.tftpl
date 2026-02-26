@@ -22,8 +22,6 @@ users:
   sudo: ALL=(ALL) NOPASSWD:ALL
   groups: sudo
   lock_passwd: true
-  create_home: true
-  home: /home/ansible
   # for access from laptop to bastion under ansible user
   ssh_authorized_keys:
   - ${admin_public_key}
@@ -40,14 +38,12 @@ packages:
 write_files:
 # Private SSH key used by Ansible to access other nodes
 - path: /home/ansible/.ssh/id_ed25519
-  owner: ansible:ansible
   permissions: "0600"
   encoding: b64
   content: ${private_key_ansible}
 
 # GitHub known_hosts entry (avoid interactive prompt)
 - path: /home/ansible/.ssh/known_hosts
-  owner: ansible:ansible
   permissions: "0600"
   content: ${github_ssh_host_key}
 

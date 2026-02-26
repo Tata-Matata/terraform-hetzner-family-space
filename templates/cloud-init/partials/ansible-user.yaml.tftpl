@@ -1,7 +1,19 @@
 users:
-  - name: ansible
-    gecos: Ansible Automation User
-    shell: /bin/bash
-    sudo: ALL=(ALL) NOPASSWD:ALL
-    ssh_authorized_keys:
-      - ${ansible_public_key}
+# Add 'default' user to avoid fully overriding the image's default users config.
+# This preserves standard home directory and permission initialization logic.
+# to troubleshoot if default user was preserved, run cat /etc/cloud/cloud.cfg | grep -i default_user -A 10
+# should show the user name, for ex., ubuntu
+# Then run getent passwd ubuntu, it should show the user entry. If not, then the default user was overridden
+- default
+- name: ansible
+  # comment / full name field in /etc/passwd
+  gecos: Ansible Automation User
+  shell: /bin/bash
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  groups: sudo
+  lock_passwd: true
+  create_home: true
+  home: /home/ansible
+  # for access from bastion under ansible user
+  ssh_authorized_keys:
+  - ${ansible_public_key}
