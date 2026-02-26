@@ -8,8 +8,9 @@ module "vault_server" {
   os_image        = "ubuntu-22.04"
   server_type     = "cx23"
 
-  #temp ssh access for Ansible from Bastion
-  ssh_key_ids = [data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_public_key]
+  #temp ssh access for Ansible from Bastion under root user. 
+  # not required any more since runs under ansible user
+  ssh_key_ids = []
 
   #network config
   public_ip_enabled = false
@@ -27,10 +28,13 @@ module "vault_server" {
     role = "vault"
   }
 
-  //cloud-init routing config to set default route via Bastion and configure DNS
+  //cloud-init routing config to set default route via Bastion and configure DNS, create Ansible user with provided public key
   user_data = templatefile(
-    "${path.root}/../templates/cloud-init/routing.yaml.tftpl",
-    {}
+    "${path.root}/../templates/cloud-init/consul-vault-node/node.yaml.tftpl",
+    {
+      ansible_user_block = local.ansible_user_block
+      routing_block      = local.routing_block
+    }
   )
 }
 
@@ -42,3 +46,15 @@ module "vault_firewall" {
 
 }
 
+locals {
+  ansible_user_block = templatefile(
+    "${path.root}/../templates/cloud-init/partials/ansible-user.yaml.tftpl",
+    {
+      ansible_public_key = data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_public_key
+    }
+  )
+
+  routing_block = templatefile(
+    "${path.root}/../templates/cloud-init/partials/routing.yaml.tftpl", {}
+  )
+}

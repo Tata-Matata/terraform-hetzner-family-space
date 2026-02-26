@@ -19,12 +19,7 @@ resource "hcloud_server" "server" {
     ip = local.host_ip
   }
 
-  lifecycle {
-    precondition {
-      condition     = length(var.ssh_key_ids) > 0
-      error_message = "Required SSH key missing. Apply global/ssh-keys first."
-    }
-  }
+
 
   user_data = var.user_data
 

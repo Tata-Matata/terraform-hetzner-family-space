@@ -1,10 +1,17 @@
-consul:
+consul_servers:
   hosts:
 %{ for idx, ip in consul_private_ips ~}
     consul-${idx + 1}:
       ansible_host: ${ip}
 %{ endfor ~}
 
+consul_clients:
+  hosts: {}
+
+consul:
+  children:
+    consul_servers:
+    consul_clients:
 
 vault:
   hosts:

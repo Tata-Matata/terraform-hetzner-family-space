@@ -7,8 +7,9 @@ module "bastion_server" {
   os_image        = "ubuntu-22.04"
   server_type     = "cx23"
 
-  #temp admin access
-  ssh_key_ids = [data.hcloud_ssh_key.admin.id]
+  #temp admin access, works under root, uncomment only for troubleshooting, if ssh with ansible user doesn't work
+  #ssh_key_ids = [data.terraform_remote_state.global_ssh_keys.outputs.admin_access_public_key]
+  ssh_key_ids = []
 
   #network config
   //enable public IP only for bastion 
@@ -32,12 +33,15 @@ module "bastion_server" {
   user_data = templatefile(
     "${path.module}/cloud-init/bastion.yaml.tftpl",
     {
-      private_key_b64 = base64encode(
+      private_key_ansible = base64encode(
         data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_private_key
       )
       github_ssh_host_key = var.github_ssh_host_key
+      admin_public_key    = data.terraform_remote_state.global_ssh_keys.outputs.admin_access_public_key
     }
   )
+
+
 }
 
 module "bastion_firewall" {

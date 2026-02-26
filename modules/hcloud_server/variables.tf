@@ -34,9 +34,8 @@ variable "host_offset" {
   type        = number
 }
 
-
 variable "ssh_key_ids" {
-  description = "List of Hetzner SSH key IDs to inject"
+  description = "List of Hetzner SSH key IDs to inject for root access (optional, can be empty if user_data is used to inject keys for ansible user)"
   type        = list(string)
 }
 

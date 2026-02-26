@@ -16,6 +16,7 @@ variable "host_offset_consul" {
   }
 }
 
+
 # FIREWALL
 
 locals {

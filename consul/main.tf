@@ -8,11 +8,11 @@ module "consul_server" {
   os_image        = "ubuntu-22.04"
   server_type     = "cx23"
 
-  #temp ssh access for Ansible from Bastion
-  ssh_key_ids = [data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_public_key]
+  #temp ssh access for Ansible from Bastion under root user. 
+  # not required any more since runs under ansible user
+  ssh_key_ids = []
 
   #network config
-
   public_ip_enabled = false
 
   // Hetzner expects here ID of the parent network
@@ -30,10 +30,12 @@ module "consul_server" {
   }
 
   user_data = templatefile(
-    "${path.root}/../templates/cloud-init/routing.yaml.tftpl",
-    {}
+    "${path.root}/../templates/cloud-init/consul-vault-node/node.yaml.tftpl",
+    {
+      ansible_user_block = local.ansible_user_block
+      routing_block      = local.routing_block
+    }
   )
-
 }
 
 module "consul_firewall" {
@@ -44,4 +46,17 @@ module "consul_firewall" {
   consul_cluster_cidrs     = local.consul_cluster_cidrs
   consul_api_allowed_cidrs = local.consul_api_allowed_cidrs
 
+}
+
+locals {
+  ansible_user_block = templatefile(
+    "${path.root}/../templates/cloud-init/partials/ansible-user.yaml.tftpl",
+    {
+      ansible_public_key = data.terraform_remote_state.global_ssh_keys.outputs.ansible_access_public_key
+    }
+  )
+
+  routing_block = templatefile(
+    "${path.root}/../templates/cloud-init/partials/routing.yaml.tftpl", {}
+  )
 }

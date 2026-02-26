@@ -1,34 +1,75 @@
 #cloud-config
+# this first line MUST NOT BE REMOVED, otherwise cloud-init will not recognize this file as a valid cloud-init configuration and will not execute it.s
+
+#Cloud-init execution order is:
+# -users
+# -packages
+# -write_files
+# -runcmd
+# Partials must not define runcmd. Only the composition root defines runcmd. Or you explicitly merge partials into a single runcmd list
+
+users:
+# Add 'default' user to avoid fully overriding the image's default users config.
+# This preserves standard home directory and permission initialization logic.
+# to troubleshoot if default user was preserved, run cat /etc/cloud/cloud.cfg | grep -i default_user -A 10
+# should show the user name, for ex., ubuntu
+# Then run getent passwd ubuntu, it should show the user entry. If not, then the default user was overridden
+- default
+- name: ansible
+  # comment / full name field in /etc/passwd
+  gecos: Ansible Automation User
+  shell: /bin/bash
+  sudo: ALL=(ALL) NOPASSWD:ALL
+  groups: sudo
+  lock_passwd: true
+  create_home: true
+  home: /home/ansible
+  # for access from laptop to bastion under ansible user
+  ssh_authorized_keys:
+  - ${admin_public_key}
+
+packages:
+- python3
+- python3-venv
+- python3-pip
+- pipx
+- git
+- rsync
+- ansible-core
+
 write_files:
-  - path: /root/.ssh/ansible_ed25519
-    owner: root:root
-    permissions: "0600"
-    encoding: b64
-    content: ${private_key_b64}
+# Private SSH key used by Ansible to access other nodes
+- path: /home/ansible/.ssh/id_ed25519
+  owner: ansible:ansible
+  permissions: "0600"
+  encoding: b64
+  content: ${private_key_ansible}
+
+# GitHub known_hosts entry (avoid interactive prompt)
+- path: /home/ansible/.ssh/known_hosts
+  owner: ansible:ansible
+  permissions: "0600"
+  content: ${github_ssh_host_key}
+
+- path: /etc/ssh/sshd_config.d/99-disable-root.conf
+  permissions: "0644"
+  content: |
+    PermitRootLogin no
 
 runcmd:
-  - mkdir -p /root/.ssh
-  - chmod 700 /root/.ssh
-  - pipx ensurepath
-  - pipx install ansible-core
-  - ln -s /root/.local/bin/ansible /usr/local/bin/ansible
-  - ln -s /root/.local/bin/ansible-playbook /usr/local/bin/ansible-playbook
-  - ansible --version
 
-  # Preload GitHub host key into known hosts (avoid interactive prompt)
-  - |
-    cat << 'EOF' >> /root/.ssh/known_hosts 
-    ${github_ssh_host_key} 
-    EOF
-  - chmod 600 /root/.ssh/known_hosts
+# Make ansible available system-wide
+- ln -sf /home/ansible/.local/bin/ansible /usr/local/bin/ansible
+- ln -sf /home/ansible/.local/bin/ansible-playbook /usr/local/bin/ansible-playbook
 
-  # Clone Ansible repo
-  - git clone https://github.com/Tata-Matata/ansible-family-space.git /opt/ansible-family-space
-  
-packages:
-  - python3
-  - python3-venv
-  - python3-pip
-  - pipx
-  - git
-  - rsync
+# optional safety guard
+- chown -R ansible:ansible /home/ansible
+
+# Clone Ansible repo as ansible user (not root)
+# Use runuser instead of sudo:
+# cloud-init runs as root (no TTY), and sudo may trigger PAM/auth logic that requires a TTY, causing it to fail.
+# runuser switches UID directly and is safe in non-interactive provisioning.
+- runuser -l ansible -c "git clone https://github.com/Tata-Matata/ansible-family-space.git /home/ansible/ansible-family-space"
+
+# for changes in sshd_config that disable root login 
+- systemctl restart ssh
