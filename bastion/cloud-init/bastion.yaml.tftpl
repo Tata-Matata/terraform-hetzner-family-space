@@ -33,7 +33,6 @@ packages:
 - pipx
 - git
 - rsync
-- ansible-core
 
 write_files:
 # Private SSH key used by Ansible to access other nodes
@@ -54,9 +53,22 @@ write_files:
 
 runcmd:
 
-# Make ansible available system-wide
-- ln -sf /home/ansible/.local/bin/ansible /usr/local/bin/ansible
-- ln -sf /home/ansible/.local/bin/ansible-playbook /usr/local/bin/ansible-playbook
+# Create an isolated Python environment in /opt/ansible
+# It’s a self-contained Ansible runtime. Has its own site-packages, does NOT use system Python packages
+# Isolated from Ubuntu’s apt Python. Prevents resolvelib / dependency mismatches with apt-installed Python packages. 
+# Ensures Ansible has exactly the dependencies it needs, no more, no less.
+
+- python3 -m venv /opt/ansible
+- /opt/ansible/bin/pip install --upgrade pip
+- /opt/ansible/bin/pip install ansible-core==2.20.4
+
+# When a login shell starts (ssh), /etc/profile is executed and it loads all scripts in /etc/profile.d/*.sh. 
+# Then user files are loaded ~/.bashrc or ~/.profile.
+# /etc/profile.d/ is a directory for system-wide shell environment extensions.
+# we create /etc/profile.d/ansible.sh with the line to prepend /opt/ansible/bin to the existing PATH, 
+# now it works for all users, not only ansible user
+- echo 'export PATH="/opt/ansible/bin:$PATH"' > /etc/profile.d/ansible.sh
+- chmod 644 /etc/profile.d/ansible.sh
 
 # optional safety guard
 - chown -R ansible:ansible /home/ansible
