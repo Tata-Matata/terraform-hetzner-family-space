@@ -60,7 +60,8 @@ runcmd:
 
 - python3 -m venv /opt/ansible
 - /opt/ansible/bin/pip install --upgrade pip
-- /opt/ansible/bin/pip install ansible-core==2.20.4
+# Ubuntu 22.04 ships Python 3.10, so newer ansible-core releases are incompatible here.
+- /opt/ansible/bin/pip install ansible-core==2.17.14
 
 # When a login shell starts (ssh), /etc/profile is executed and it loads all scripts in /etc/profile.d/*.sh. 
 # Then user files are loaded ~/.bashrc or ~/.profile.
