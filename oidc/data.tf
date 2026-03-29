@@ -25,31 +25,10 @@ data "terraform_remote_state" "tf_state_network" {
   }
 } */
 
-data "terraform_remote_state" "consul" {
+data "terraform_remote_state" "core_network" {
   backend = "local" # Local backend for testing
   config = {
-    path = "../consul/terraform.tfstate"
-  }
-}
-
-data "terraform_remote_state" "vault" {
-  backend = "local" # Local backend for testing
-  config = {
-    path = "../vault/terraform.tfstate"
-  }
-}
-
-data "terraform_remote_state" "oidc" {
-  backend = "local" # Local backend for testing
-  config = {
-    path = "../oidc/terraform.tfstate"
-  }
-}
-
-data "terraform_remote_state" "k8s" {
-  backend = "local" # Local backend for testing
-  config = {
-    path = "../k8s/terraform.tfstate"
+    path = "../core_network/terraform.tfstate"
   }
 }
 
@@ -57,5 +36,12 @@ data "terraform_remote_state" "bastion" {
   backend = "local" # Local backend for testing
   config = {
     path = "../bastion/terraform.tfstate"
+  }
+}
+
+data "terraform_remote_state" "global_ssh_keys" {
+  backend = "local" # Local backend for testing
+  config = {
+    path = "../global/ssh_keys/terraform.tfstate"
   }
 }

@@ -20,6 +20,13 @@ vault:
       ansible_host: ${ip}
 %{ endfor ~}
 
+oidc:
+  hosts:
+%{ for idx, ip in oidc_private_ips ~}
+    oidc-${idx + 1}:
+      ansible_host: ${ip}
+%{ endfor ~}
+
 bastion:
   hosts:
     bastion-1:
