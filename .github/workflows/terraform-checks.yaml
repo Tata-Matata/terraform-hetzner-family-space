@@ -16,7 +16,9 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
       with:
-        fetch-depth: 0 # Gitleaks scans a commit range and needs full history
+        # Gitleaks scans a commit range and needs full history
+        # 0 = fetch all history for all branches and tags, as in git clone
+        fetch-depth: 0 
 
     # -----------------------------
     # Terraform
