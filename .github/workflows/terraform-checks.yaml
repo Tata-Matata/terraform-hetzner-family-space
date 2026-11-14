@@ -62,6 +62,9 @@ jobs:
       with:
         quiet: true
         framework: terraform
+        # write SARIF to a distinct file: Gitleaks action always writes results.sarif
+        output_format: cli,sarif
+        output_file_path: console,checkov.sarif
 
     # -----------------------------
     # Secret scanning
