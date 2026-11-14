@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: read
-      security-events: write
+      pull-requests: read
     steps:
     - name: Checkout code
       uses: actions/checkout@v4
@@ -44,9 +44,10 @@ jobs:
     # TFLint
     # -----------------------------
     #Terraform & provider best practices
-    - name: Install TFLint
-      run: |
-        curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
+    - name: Setup TFLint
+      uses: terraform-linters/setup-tflint@v6
+      with:
+        tflint_version: v0.66.0
 
     - name: TFLint
       run: |
@@ -65,25 +66,7 @@ jobs:
     # -----------------------------
     # Secret scanning
     # -----------------------------
-    - name: Install Gitleaks
-      run: |
-        sudo apt-get update
-        sudo apt-get install -y gitleaks
-
     - name: Run Gitleaks
-      run: |
-        gitleaks detect \
-        --source . \
-        --no-git \
-        --redact \
-        --report-format sarif \
-        --report-path /tmp/gitleaks.sarif
-
-    # -----------------------------
-    # Publish SARIF results
-    # -----------------------------
-    - name: Upload Gitleaks SARIF
-      uses: github/codeql-action/upload-sarif@v4
-      continue-on-error: true
-      with:
-        sarif_file: /tmp/gitleaks.sarif
+      uses: gitleaks/gitleaks-action@v2
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
